@@ -1,0 +1,34 @@
+const express = require('express');
+const cors = require('cors');
+const authRoutes = require('./routes/auth');
+const bookingsRoutes = require('./routes/bookings');
+const timetableRoutes = require('./routes/timetable');
+
+const app = express();
+const PORT = 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Request logging
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+// Routes
+app.use('/', authRoutes);
+app.use('/', bookingsRoutes);
+app.use('/', timetableRoutes);
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'Server is running', timestamp: new Date() });
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`🚀 BookMyCampus server running on http://localhost:${PORT}`);
+});
